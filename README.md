@@ -212,6 +212,8 @@ This scene just toggles the light on and off. It seems you'd have to create addi
 
 Initially, I could "run" the scene from the app, and it did what I expected (turned the light on and off) but pressing the button didn't trigger the scene. For no obvious reason, I had to completely delete the button and scene from the app and re-add them before things worked correctly - this was typical of the whole app experience.
 
+**Note:** even though the button talks directly to the dimmer via Bluetooth, the dimmer just acts as a gateway and still has to be able to talk to the internet in order for scenes to work (I turned off my Wi-Fi router to confirm this). Surely, there's a way for the button to control the dimmer without internet connectivity having to be available?
+
 ### Direct button to app Bluetooth connectivity
 
 I completely deleted the button from the app several times and even did a factory reset (which involves opening it up, removing the battery, leaving it for a few seconds, popping the battery back in and immediately holding the button pressed for 30 seconds). But after removing and re-adding the button for the first time, going to its settings and clicking the button no longer caused the settings functionality to connect to the button directly (rather than via the dimmer acting as a gateway). A direct connection is required if you want to update the firmware, initiate a factory reset from the app or change some of the button's settings.
