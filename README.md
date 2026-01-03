@@ -1,6 +1,8 @@
 Setting up a Shelly Gen 3 Smart Dimming Controller
 ==================================================
 
+>  **Warning:** mains electricity can kill - I am not a qualified electrician, and I accept no responsibility for any injury, damage, or loss arising from following what's described here. If you attempt anything yourself, you do so entirely at your own risk.
+
 This page documents getting a Shelly Gen 3 Smart Dimming Controller set up and working with a cheap lamp fitting. The intention was to demonstrate things worked before I started taking apart my wall switches.
 
 The wiring was simple. The Shelly app experience was diabolical and not for the faint-hearted. I've been through this process twice, once with a friend (both of us with computer science degrees) and once alone. The experience wasn't any better the second time around - it seems normal that devices fail to set up or need to be deleted and re-added for no obvious reason or need to be factory reset once or twice before things work properly. And the design of the app itself is awful, in general you need to click through various tabs with obscure icons to find what you need. And the Shelly documentation is terrible too, working out anything involved a lot of back and forward with ChatGPT and Gemini. Shelly seem to have completely reworked the app at least once which means most information on the web is completely stale and no longer applies.
@@ -209,3 +211,35 @@ And add a scene, such that you end up with this:
 This scene just toggles the light on and off. It seems you'd have to create additional scenes if e.g. you wanted long press to dim or undim the light.
 
 Initially, I could "run" the scene from the app, and it did what I expected (turned the light on and off) but pressing the button didn't trigger the scene. For no obvious reason, I had to completely delete the button and scene from the app and re-add them before things worked correctly - this was typical of the whole app experience.
+
+Wall switch
+-----------
+
+Now, the idea is to open up a wall switch and connect up and hide the dimmer behind it.
+
+**Warning:** flip the relevant breaker on your switch box to turn off power before opening up a wall switch and making any changes.
+
+The setup for a ceiling light and switch is something like this:
+
+![ceiling light and wall switch](images/diagram.png)
+
+All the wiring is hidden in your walls - all you see are the wires that come out through the hole (the ellipse in the diagram above) behind your wall switch.
+
+There are two live wires (usually brown) that are connected to the wall switch. And, if you're lucky, there's a neutral wire. The neutral wire isn't required for a simple switch so whoever wired your home may not have bothered to make it accessible. Hence, the need for the Shelly Bypass if that's the case.
+
+So the idea is to:
+
+* Disconnect your wall switch from the two live wires coming out of the wall.
+* Connect the wall switch to the **S1** terminal and one of the two **L** terminals on the dimmer.
+* Connect the neutral wire coming out of the wall to the dimmer's **N** terminal. If there's no neutral wire, you'll have to install a Shelly Bypass.
+* Connect the live wire connected to the mains to the remaining **L** terminal on the dimmer.
+* Connect the live wire connected to the light to one of the two **O** terminals on the dimmer.
+
+Generally, you'll just see two brown live wires coming out of the wall, so how to you know which is connected to the mains and which is connected to the light? As far as I know, the only way to do this is with a multimeter and a ground wire.
+
+1. Set the multimeter to AC voltage.
+2. Measure voltage from each live wire to ground:
+   * The wire reading ~230V (in Europe) is connected to the mains.
+   * The wire reading ~0V (or very small) is connected to the light.
+
+Testing this requires that switch is live (i.e. power is not turned off at your switch box) so be extremely careful. My non-professional suggestion would be to connect **all** wires to a terminal block so that there are no loose wires that you can brush against and then test against the relevant terminals.
