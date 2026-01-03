@@ -224,6 +224,16 @@ To resolve this:
 * This is where it gets stupid - if you return to the app it still shows the note telling you to put it into pairing mode. You have to press the _Cancel_ button for this note (you're just canceling the note, not the pairing process).
 * Now click the button again (this time just click and release) - it'll re-initiate pairing, Android will ask you if you want to pair and all should be good. The app should be able to connect directly to the button and retrieve its status (and consistently be able to do this from now on when you click the button while looking at its settings in the app).
 
+### Find my device
+
+Being able to find the button from the app is a useful feature, however it doesn't work unless you'd already gone to the button's settings, clicked the button (to enable direct connection) and turned on _Beacon Mode_.
+
+Even though the app always knows the button's current settings, _Find my device_ just silently does nothing rather than alerting you to the fact that it can't find a button if its _Beacon Mode_ isn't enabled. This is typical of the app.
+
+Once _Beacon Mode_ is enabled, _Find my device_ will cause the button to beep if you get close enough to it. The beep is extremely annoying so find it quickly once it starts, or you'll infuriate all in the vicinity.
+
+_Beacon Mode_ causes the button to wake up every 8 seconds to see if a device is trying to find. This presumably noticeably affects its battery life.
+
 Wall switch
 -----------
 
