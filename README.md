@@ -212,6 +212,18 @@ This scene just toggles the light on and off. It seems you'd have to create addi
 
 Initially, I could "run" the scene from the app, and it did what I expected (turned the light on and off) but pressing the button didn't trigger the scene. For no obvious reason, I had to completely delete the button and scene from the app and re-add them before things worked correctly - this was typical of the whole app experience.
 
+### Direct button to app Bluetooth connectivity
+
+I completely deleted the button from the app several times and even did a factory reset (which involves opening it up, removing the battery, leaving it for a few seconds, popping the battery back in and immediately holding the button pressed for 30 seconds). But after removing and re-adding the button for the first time, going to its settings and clicking the button no longer caused the settings functionality to connect to the button directly (rather than via the dimmer acting as a gateway). A direct connection is required if you want to update the firmware, initiate a factory reset from the app or change some of the button's settings.
+
+To resolve this:
+
+* Go to the Android Bluetooth settings, find the button (mine had the informative name "SBBT-002C-4ee4") and tell Android to forget it.
+* Go back to the button settings in the app and click the button, the app should notice the button click via the dimmer (acting as a gateway). It'll tell you to put the button into pairing mode.
+* Click and hold the button for 10 seconds to put it into pairing mode.
+* This is where it gets stupid - if you return to the app it still shows the note telling you to put it into pairing mode. You have to press the _Cancel_ button for this note (you're just canceling the note, not the pairing process).
+* Now click the button again (this time just click and release) - it'll re-initiate pairing, Android will ask you if you want to pair and all should be good. The app should be able to connect directly to the button and retrieve its status (and consistently be able to do this from now on when you click the button while looking at its settings in the app).
+
 Wall switch
 -----------
 
