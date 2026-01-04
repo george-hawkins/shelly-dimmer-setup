@@ -1,7 +1,7 @@
 Setting up a Shelly Gen 3 Smart Dimming Controller
 ==================================================
 
->  **Warning:** mains electricity can kill - I am not a qualified electrician, and I accept no responsibility for any injury, damage, or loss arising from following what's described here. If you attempt anything yourself, you do so entirely at your own risk.
+>  **Warning:** mains electricity can kill - I am not a qualified electrician, and I accept no responsibility for any injury, damage, or loss arising from following what's described here. If you attempt anything yourself, you do so entirely at your own risk. The wire colors and voltages described below are standard in the EU and also used in many other countries.
 
 This page documents getting a Shelly Gen 3 Smart Dimming Controller set up and working with a cheap lamp fitting. The intention was to demonstrate things worked before I started taking apart my wall switches.
 
@@ -145,7 +145,7 @@ If you click on the device, you can adjust the brightness - though this may not 
 
 <img width="288" height="588" src="images/screenshots/brightness.png">
 
-Note that in the screenshot above, you can see the voltage (232V) and the power consumer (4.3W). It's able to determine these values as we connected the Controller's **N** terminal to the real electrical neutral rather than using a [Shelly Bypass](https://www.shelly.com/products/shelly-bypass). Calibration and dimming will also work better as a result of providing the device with a real reference voltage.
+Note that in the screenshot above, you can see the voltage (232V) and the power consumed (4.3W). It's able to determine these values as we connected the Controller's **N** terminal to the real electrical neutral rather than using a [Shelly Bypass](https://www.shelly.com/products/shelly-bypass). Calibration and dimming will also work better as a result of providing the device with a real reference voltage.
 
 Now, go to the device's settings and update the firmware before going further. Despite ordering directly from Shelly, my device came with firmware that was over a year old.
 
@@ -171,10 +171,12 @@ Switching the light off has a disconcerting delay where nothing seems to happen 
 
 The info bubble here is another bit of useless information - it's telling you that if you were using an API call, the value set here would be used if you didn't specify a duration. We're not using API calls and the value set here is the one that will be used if we turn the light off using the app or the switch.
 
-Adding a Bluetooth switch
+Note: now my bulb turns off instantly, but I still get an odd momentary fade in when turning it on - nothing I tried changed this (ChatGPT and Gemini suggest adjusting _Min brightness on toggle_ but this is not the issue).
+
+Adding a Bluetooth button
 -------------------------
 
-I was also interested in turning the light on and off remotely without having to use the app and so bought a [Shelly BLU Button Touch 1](https://www.shelly.com/products/shelly-blu-button-tough-1-mocha).
+I was also interested in turning the light on and off remotely without having to use the app and so bought a [Shelly BLU Button Tough 1](https://www.shelly.com/products/shelly-blu-button-tough-1-mocha).
 
 I nearly gave up on this step, getting the button to work was maddening and all information on the web seemed completely out of date.
 
@@ -186,7 +188,9 @@ Go to the Bluetooth tab of the Smart Dimming Controller and tick enable:
 
 <img width="288" height="588" src="images/screenshots/enable-bluetooth.png">
 
-Click the button and hold it for at least 10 seconds, then release - this will put it into pairing mode. Then go back to the app's main screen and click the _Add Device_ button - if you're lucky it may immediately detect the device otherwise select the _Add Bluetooth Device_ option. The Smart Dimming Controller actually acts as a gateway between the button and the app.
+Click the button and hold it for at least 10 seconds, then release - this will put it into pairing mode. Then go back to the app's main screen and click the _Add Device_ button - if you're lucky it may immediately detect the device otherwise select the _Add Bluetooth Device_ option.
+
+Note: the app does talk directly with the button when modifying some of its settings and updating its firmware, so you pair it with your phone for this. But in normal use it's the Smart Dimming Controller that acts as a gateway for the button.
 
 Once the button is added, update its firmware too:
 
@@ -212,7 +216,31 @@ This scene just toggles the light on and off. It seems you'd have to create addi
 
 Initially, I could "run" the scene from the app, and it did what I expected (turned the light on and off) but pressing the button didn't trigger the scene. For no obvious reason, I had to completely delete the button and scene from the app and re-add them before things worked correctly - this was typical of the whole app experience.
 
-**Note:** even though the button talks directly to the dimmer via Bluetooth, the dimmer just acts as a gateway and still has to be able to talk to the internet in order for scenes to work (I turned off my Wi-Fi router to confirm this). Surely, there's a way for the button to control the dimmer without internet connectivity having to be available?
+### Non-scene based control
+
+Even though the button talks directly to the dimmer via Bluetooth, the dimmer just acts as a gateway and still has to be able to talk to the internet in order for scenes to work (I turned off my Wi-Fi router to confirm this).
+
+It seems it is possible for the button to control the dimmer without internet connectivity having to be available. But this isn't directly supported in the app (as of early 2026) so I'm just going to provide some pointers rather than go into this in detail.
+
+If you go the device's settings and open the networks tab, you can find the device's IP address there:
+
+<img width="288" height="588" src="images/screenshots/wifi.png">
+
+If you open this IP address in your browser, you'll find the device's web interface:
+
+![Shelly web UI](images/shelly-web-ui.png)
+
+As far as I understand it, you can:
+
+* Go to _Components_, then _Bluetooth (BTHome) devices_ and press the plus button there and scan for a device.
+* Put the button in pairing mode.
+* Once found, assign it and then create an _Action_ to toggle the dimmer.
+
+I haven't tried this and from my experience with the rest of the process, it probably won't work as expected.
+
+My impression is that [BTHome](https://bthome.io/) features may one day be integrated into the app but currently aren't really meant to be used directly but are instead meant for integration with a home automation system like [Home Assistant](https://www.home-assistant.io/).
+
+Note: in the app, if you select the dimmer, you can also find tabs for components (the isometric cube icon) and for actions (the two-links-of-a-chain icon) but I don't see anyway to set up anything BTHome related. That doesn't mean it's not buried deep in there somewhere.
 
 ### Direct button to app Bluetooth connectivity
 
@@ -223,7 +251,7 @@ To resolve this:
 * Go to the Android Bluetooth settings, find the button (mine had the informative name "SBBT-002C-4ee4") and tell Android to forget it.
 * Go back to the button settings in the app and click the button, the app should notice the button click via the dimmer (acting as a gateway). It'll tell you to put the button into pairing mode.
 * Click and hold the button for 10 seconds to put it into pairing mode.
-* This is where it gets stupid - if you return to the app it still shows the note telling you to put it into pairing mode. You have to press the _Cancel_ button for this note (you're just canceling the note, not the pairing process).
+* This is where it gets stupid - if you return to the app it still shows the note telling you to put it into pairing mode. You have to press the _Cancel_ button for this note (you're just canceling the note, not any ongoing pairing process).
 * Now click the button again (this time just click and release) - it'll re-initiate pairing, Android will ask you if you want to pair and all should be good. The app should be able to connect directly to the button and retrieve its status (and consistently be able to do this from now on when you click the button while looking at its settings in the app).
 
 ### Find my device
@@ -251,6 +279,8 @@ All the wiring is hidden in your walls - all you see are the wires that come out
 
 There are two live wires (usually brown) that are connected to the wall switch. And, if you're lucky, there's a neutral wire. The neutral wire isn't required for a simple switch so whoever wired your home may not have bothered to make it accessible. Hence, the need for the Shelly Bypass if that's the case.
 
+If you also have a ground wire (typically yellow and green) connected to anything (the switch itself or its housing) leave it connected - no ground related changes are needed.
+
 So the idea is to:
 
 * Disconnect your wall switch from the two live wires coming out of the wall.
@@ -259,7 +289,7 @@ So the idea is to:
 * Connect the live wire connected to the mains to the remaining **L** terminal on the dimmer.
 * Connect the live wire connected to the light to one of the two **O** terminals on the dimmer.
 
-Generally, you'll just see two brown live wires coming out of the wall, so how to you know which is connected to the mains and which is connected to the light? As far as I know, the only way to do this is with a multimeter and a ground wire.
+Generally, you'll just see two brown live wires coming out of the wall, so how to you know which is connected to the mains and which is connected to the light? The way to do this is with a multimeter and a ground wire:
 
 1. Set the multimeter to AC voltage.
 2. Measure voltage from each live wire to ground:
@@ -267,3 +297,7 @@ Generally, you'll just see two brown live wires coming out of the wall, so how t
    * The wire reading ~0V (or very small) is connected to the light.
 
 Testing this requires that switch is live (i.e. power is not turned off at your switch box) so be extremely careful. My non-professional suggestion would be to connect **all** wires to a terminal block so that there are no loose wires that you can brush against and then test against the relevant terminals.
+
+Note: if you don't have a ground wire but do have a neutral wire you can test against it instead, but if you have both, you should test against the ground wire.
+
+If you don't already have a multimeter, you can instead buy a cheaper voltage tester (which is probably better for this kind of testing) like the [PAN Volttester 400FI](https://www.pancontrol.at/en/product/pan-volt-tester-400fi/) for around US$20.
